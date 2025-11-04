@@ -49,7 +49,8 @@ function validatePhone(phone: string): boolean {
 export default function CheckoutScreen() {
   const { selected } = useLocalSearchParams();
   const router = useRouter();
-  const [selectedCourses, setSelectedCourses] = useState<string[]>(() => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [selectedCourses, _setSelectedCourses] = useState<string[]>(() => {
     // Initialize with courses from navigation params if available
     if (selected) {
       try {
@@ -64,7 +65,6 @@ export default function CheckoutScreen() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [showTotal, setShowTotal] = useState(false);
   const [showPayment, setShowPayment] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({});
 
@@ -72,15 +72,6 @@ export default function CheckoutScreen() {
   const [cardNumber, setCardNumber] = useState("");
   const [expiry, setExpiry] = useState("");
   const [cvv, setCvv] = useState("");
-
-  const toggleCourse = (courseId: string) => {
-    setSelectedCourses((prev) =>
-      prev.includes(courseId)
-        ? prev.filter((id) => id !== courseId)
-        : [...prev, courseId]
-    );
-    setShowTotal(false);
-  };
 
   const validateForm = (): boolean => {
     const newErrors: { name?: string; phone?: string; email?: string } = {};
@@ -105,19 +96,6 @@ export default function CheckoutScreen() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const calculateTotal = () => {
-    if (selectedCourses.length === 0) {
-      Alert.alert("Error", "Please select at least one course.");
-      return;
-    }
-
-    if (!validateForm()) {
-      Alert.alert("Error", "Please fill in all contact details correctly.");
-      return;
-    }
-
-    setShowTotal(true);
-  };
 
   const selectedCourseData = ALL_COURSES.filter((c) =>
     selectedCourses.includes(c.id)
@@ -130,33 +108,15 @@ export default function CheckoutScreen() {
   const vat = afterDiscount * 0.15; // 15% VAT
   const total = afterDiscount + vat;
 
-  const handleRequestConsultant = () => {
-    if (selectedCourses.length === 0) {
-      Alert.alert("Error", "Please select at least one course.");
+
+  const handlePayment = () => {
+    if (!cardName || !cardNumber || !expiry || !cvv) {
+      Alert.alert("Error", "Please fill in all card details.");
       return;
     }
 
     if (!validateForm()) {
       Alert.alert("Error", "Please fill in all contact details correctly.");
-      return;
-    }
-
-    Alert.alert(
-      "Request Submitted",
-      `Thank you ${name}! A consultant will contact you soon at ${email} or ${phone}.`
-    );
-    
-    // Reset form
-    setName("");
-    setPhone("");
-    setEmail("");
-    setSelectedCourses([]);
-    setShowTotal(false);
-  };
-
-  const handlePayment = () => {
-    if (!cardName || !cardNumber || !expiry || !cvv) {
-      Alert.alert("Error", "Please fill in all card details.");
       return;
     }
 
@@ -182,39 +142,98 @@ export default function CheckoutScreen() {
           <Text style={styles.header}>Payment Details</Text>
           <Text style={styles.total}>Total: R{total.toFixed(2)}</Text>
 
-          <TextInput
-            style={styles.input}
-            placeholder="Name on Card"
-            placeholderTextColor="#ccc"
-            value={cardName}
-            onChangeText={setCardName}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Card Number"
-            placeholderTextColor="#ccc"
-            keyboardType="numeric"
-            value={cardNumber}
-            onChangeText={setCardNumber}
-            maxLength={16}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Expiry Date (MM/YY)"
-            placeholderTextColor="#ccc"
-            value={expiry}
-            onChangeText={setExpiry}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="CVV"
-            placeholderTextColor="#ccc"
-            keyboardType="numeric"
-            secureTextEntry
-            value={cvv}
-            onChangeText={setCvv}
-            maxLength={3}
-          />
+          {/* Contact Details Form */}
+          <View style={styles.paymentFormCard}>
+            <Text style={styles.sectionTitle}>Contact Details</Text>
+
+            <Text style={styles.label}>Name *</Text>
+            <TextInput
+              style={[styles.input, errors.name && styles.inputError]}
+              value={name}
+              onChangeText={(text) => {
+                setName(text);
+                if (errors.name) setErrors({ ...errors, name: undefined });
+              }}
+              placeholder="Enter your name"
+              placeholderTextColor="#999"
+            />
+            {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
+
+            <Text style={styles.label}>Phone Number *</Text>
+            <TextInput
+              style={[styles.input, errors.phone && styles.inputError]}
+              value={phone}
+              onChangeText={(text) => {
+                setPhone(text);
+                if (errors.phone) setErrors({ ...errors, phone: undefined });
+              }}
+              placeholder="Enter your phone number"
+              placeholderTextColor="#999"
+              keyboardType="phone-pad"
+            />
+            {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
+
+            <Text style={styles.label}>Email Address *</Text>
+            <TextInput
+              style={[styles.input, errors.email && styles.inputError]}
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                if (errors.email) setErrors({ ...errors, email: undefined });
+              }}
+              placeholder="Enter your email"
+              placeholderTextColor="#999"
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+            {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          </View>
+
+          {/* Card Details Form */}
+          <View style={styles.paymentFormCard}>
+            <Text style={styles.sectionTitle}>Card Details</Text>
+
+            <Text style={styles.label}>Name on Card *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Name on Card"
+              placeholderTextColor="#999"
+              value={cardName}
+              onChangeText={setCardName}
+            />
+
+            <Text style={styles.label}>Card Number *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Card Number"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+              value={cardNumber}
+              onChangeText={setCardNumber}
+              maxLength={16}
+            />
+
+            <Text style={styles.label}>Expiry Date (MM/YY) *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="MM/YY"
+              placeholderTextColor="#999"
+              value={expiry}
+              onChangeText={setExpiry}
+            />
+
+            <Text style={styles.label}>CVV *</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="CVV"
+              placeholderTextColor="#999"
+              keyboardType="numeric"
+              secureTextEntry
+              value={cvv}
+              onChangeText={setCvv}
+              maxLength={3}
+            />
+          </View>
 
           <TouchableOpacity style={styles.button} onPress={handlePayment}>
             <Text style={styles.buttonText}>Confirm Payment</Text>
@@ -246,99 +265,34 @@ export default function CheckoutScreen() {
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Calculate Total Fees</Text>
         <Text style={styles.subtitle}>
-          Enter your contact details and select courses to get a quote
+          Review your selected courses and quote
         </Text>
 
-        {/* Contact Form */}
-        <View style={styles.formCard}>
-          <Text style={styles.sectionTitle}>Contact Details</Text>
-
-          <Text style={styles.label}>Name *</Text>
-          <TextInput
-            style={[styles.input, errors.name && styles.inputError]}
-            value={name}
-            onChangeText={(text) => {
-              setName(text);
-              if (errors.name) setErrors({ ...errors, name: undefined });
-            }}
-            placeholder="Enter your name"
-            placeholderTextColor="#999"
-          />
-          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-
-          <Text style={styles.label}>Phone Number *</Text>
-          <TextInput
-            style={[styles.input, errors.phone && styles.inputError]}
-            value={phone}
-            onChangeText={(text) => {
-              setPhone(text);
-              if (errors.phone) setErrors({ ...errors, phone: undefined });
-            }}
-            placeholder="Enter your phone number"
-            placeholderTextColor="#999"
-            keyboardType="phone-pad"
-          />
-          {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
-
-          <Text style={styles.label}>Email Address *</Text>
-          <TextInput
-            style={[styles.input, errors.email && styles.inputError]}
-            value={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              if (errors.email) setErrors({ ...errors, email: undefined });
-            }}
-            placeholder="Enter your email"
-            placeholderTextColor="#999"
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-        </View>
-
-        {/* Course Selection */}
-        <View style={styles.formCard}>
-          <Text style={styles.sectionTitle}>Select Courses</Text>
-          <Text style={styles.subtitle}>Select one or more courses (discounts apply)</Text>
-
-          {ALL_COURSES.map((course) => {
-            const isSelected = selectedCourses.includes(course.id);
-            return (
-              <TouchableOpacity
-                key={course.id}
-                style={[
-                  styles.courseRow,
-                  isSelected && styles.courseRowSelected,
-                ]}
-                onPress={() => toggleCourse(course.id)}
-              >
-                <View style={styles.checkboxContainer}>
-                  <View
-                    style={[
-                      styles.checkbox,
-                      isSelected && styles.checkboxSelected,
-                    ]}
-                  >
-                    {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                  </View>
-                  <View style={styles.courseInfo}>
-                    <Text style={styles.courseName}>{course.title}</Text>
-                    <Text style={styles.courseDuration}>{course.duration}</Text>
-                  </View>
-                  <Text style={styles.courseFee}>R{course.fee}</Text>
+        {/* Selected Courses Display */}
+        {selectedCourseData.length > 0 ? (
+          <View style={styles.formCard}>
+            <Text style={styles.sectionTitle}>Selected Courses</Text>
+            {selectedCourseData.map((course) => (
+              <View key={course.id} style={styles.selectedCourseRow}>
+                <View style={styles.selectedCourseInfo}>
+                  <Text style={styles.selectedCourseName}>{course.title}</Text>
+                  <Text style={styles.selectedCourseDuration}>{course.duration}</Text>
                 </View>
-              </TouchableOpacity>
-            );
-          })}
-        </View>
+                <Text style={styles.selectedCourseFee}>R{course.fee}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <View style={styles.formCard}>
+            <Text style={styles.sectionTitle}>No Courses Selected</Text>
+            <Text style={styles.noCoursesText}>
+              Please go back to the courses page to select courses.
+            </Text>
+          </View>
+        )}
 
-        {/* Calculator Button */}
-        <TouchableOpacity style={styles.calculatorButton} onPress={calculateTotal}>
-          <Text style={styles.calculatorButtonText}>Calculate Total</Text>
-        </TouchableOpacity>
-
-        {/* Total Display */}
-        {showTotal && selectedCourseData.length > 0 && (
+        {/* Total Display - Always shown when courses are selected */}
+        {selectedCourseData.length > 0 && (
           <View style={styles.totalCard}>
             <Text style={styles.totalTitle}>Quote Summary</Text>
             
@@ -386,16 +340,6 @@ export default function CheckoutScreen() {
           </View>
         )}
 
-        {/* Request Consultant Button */}
-        <TouchableOpacity
-          style={styles.consultantButton}
-          onPress={handleRequestConsultant}
-        >
-          <Text style={styles.consultantButtonText}>
-            Request Consultant to Contact Me
-          </Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
           <Text style={styles.backButtonText}>Back to Home</Text>
         </TouchableOpacity>
@@ -429,9 +373,16 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 20,
     paddingTop: 100,
+    paddingBottom: 40,
     backgroundColor: "rgba(0,0,0,0.7)",
     borderRadius: 20,
     margin: 10,
+  },
+  paymentFormCard: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+    borderRadius: 15,
+    padding: 20,
+    marginBottom: 20,
   },
   title: {
     fontSize: 28,
@@ -491,73 +442,40 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  courseRow: {
-    backgroundColor: "rgba(123, 44, 191, 0.1)",
+  selectedCourseRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "rgba(123, 44, 191, 0.15)",
     borderRadius: 10,
     padding: 12,
     marginBottom: 10,
     borderWidth: 1,
     borderColor: "rgba(255,255,255,0.2)",
   },
-  courseRowSelected: {
-    backgroundColor: "rgba(123, 44, 191, 0.3)",
-    borderColor: "#7B2CBF",
-  },
-  checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderWidth: 2,
-    borderColor: "#7B2CBF",
-    borderRadius: 4,
-    marginRight: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkboxSelected: {
-    backgroundColor: "#7B2CBF",
-  },
-  checkmark: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "bold",
-  },
-  courseInfo: {
+  selectedCourseInfo: {
     flex: 1,
   },
-  courseName: {
+  selectedCourseName: {
     fontSize: 16,
     fontWeight: "600",
     color: "#fff",
-    marginBottom: 2,
+    marginBottom: 4,
   },
-  courseDuration: {
+  selectedCourseDuration: {
     fontSize: 12,
     color: "#bbb",
   },
-  courseFee: {
+  selectedCourseFee: {
     fontSize: 16,
     fontWeight: "700",
     color: "#D0A3FF",
   },
-  calculatorButton: {
-    backgroundColor: "#7B2CBF",
-    padding: 16,
-    borderRadius: 25,
-    alignItems: "center",
-    marginBottom: 20,
-    shadowColor: "#7B2CBF",
-    shadowOpacity: 0.9,
-    shadowOffset: { width: 0, height: 0 },
-    shadowRadius: 12,
-  },
-  calculatorButtonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 18,
+  noCoursesText: {
+    fontSize: 14,
+    color: "#ccc",
+    textAlign: "center",
+    marginTop: 10,
   },
   totalCard: {
     backgroundColor: "rgba(123, 44, 191, 0.2)",
@@ -632,18 +550,6 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
   },
   buttonText: {
-    color: "#fff",
-    fontWeight: "700",
-    fontSize: 16,
-  },
-  consultantButton: {
-    backgroundColor: "#9C4DCC",
-    padding: 16,
-    borderRadius: 25,
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  consultantButtonText: {
     color: "#fff",
     fontWeight: "700",
     fontSize: 16,
