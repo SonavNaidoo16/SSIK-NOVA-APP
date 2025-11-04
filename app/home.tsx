@@ -73,6 +73,7 @@ export default function HomeScreen() {
             Reach out for more info or assistance.
           </Text>
         </TouchableOpacity>
+        <Text style={styles.subtitle}>Developed by S.S.I.K Nova</Text>
       </ScrollView>
     </ImageBackground>
     
