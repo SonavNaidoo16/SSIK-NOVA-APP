@@ -1,5 +1,6 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import {
+  Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
@@ -7,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import DropdownMenu from "./components/DropdownMenu";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -29,9 +31,22 @@ export default function HomeScreen() {
         <Text style={styles.logoutText}>Logout</Text>
       </TouchableOpacity>
 
+      {/* Dropdown Menu */}
+      <View style={styles.menuContainer}>
+        <DropdownMenu />
+      </View>
+
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.title}>Empowering The Nation</Text>
         <Text style={styles.subtitle}>Welcome, {name}</Text>
+        
+        {/* Logo */}
+        <Image 
+          source={require("../assets/images/logo.jpg")} 
+          style={styles.logo}
+          resizeMode="contain"
+        />
+
         <Text style={styles.subtitle}>Choose a course or option below</Text>
 
         <TouchableOpacity
@@ -60,7 +75,7 @@ export default function HomeScreen() {
         >
           <Text style={styles.cardTitle}>About Us</Text>
           <Text style={styles.cardText}>
-            Learn more about Empowering the Nation.
+            Learn more about Empowering the Nation and view course summaries.
           </Text>
         </TouchableOpacity>
 
@@ -89,10 +104,23 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.65)",
   },
+  menuContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 100,
+  },
   container: {
     padding: 20,
     alignItems: "center",
-    paddingTop: 80, // space for logout button
+    paddingTop: 100, // space for logout button and menu
+  },
+  logo: { 
+    width: 180,
+    height: 180,
+    resizeMode: 'contain', 
+    marginBottom: 30,
+    marginTop: -10,
   },
   title: {
     fontSize: 30,
@@ -134,14 +162,14 @@ const styles = StyleSheet.create({
     top: 40,
     right: 20,
     backgroundColor: "#7B2CBF",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 20,
     zIndex: 10,
   },
   logoutText: {
     color: "#fff",
     fontWeight: "600",
-    fontSize: 14,
+    fontSize: 16,
   },
 });

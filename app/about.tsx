@@ -1,5 +1,6 @@
 import { useRouter } from "expo-router";
 import { ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import DropdownMenu from "./components/DropdownMenu";
 
 export default function AboutScreen() {
   const router = useRouter();
@@ -10,6 +11,11 @@ export default function AboutScreen() {
       style={styles.background}
     >
       <View style={styles.overlay} />
+
+      {/* Dropdown Menu */}
+      <View style={styles.menuContainer}>
+        <DropdownMenu />
+      </View>
 
       <ScrollView contentContainerStyle={styles.container}>
         {/* About Us */}
@@ -57,75 +63,6 @@ export default function AboutScreen() {
           </Text>
         </View>
 
-        {/* Courses */}
-        <View style={styles.card}>
-          <Text style={styles.title}>Courses</Text>
-
-          {/* First Aid */}
-          <Text style={styles.subtitle}>First Aid</Text>
-          <Text style={styles.text}>Fee: R1500</Text>
-          <Text style={styles.text}>Why take it: Learn how to handle emergencies and give basic life support.</Text>
-          <Text style={styles.bullet}>• How to treat wounds and bleeding</Text>
-          <Text style={styles.bullet}>• Burns and fractures care</Text>
-          <Text style={styles.bullet}>• Managing emergency scenes</Text>
-          <Text style={styles.bullet}>• CPR (Cardio-Pulmonary Resuscitation)</Text>
-          <Text style={styles.bullet}>• Helping someone with choking or blocked airways</Text>
-
-          {/* Sewing */}
-          <Text style={styles.subtitle}>Sewing</Text>
-          <Text style={styles.text}>Fee: R1500</Text>
-          <Text style={styles.text}>Why take it: Learn to tailor, alter, and create your own garments.</Text>
-          <Text style={styles.bullet}>• Types of stitches</Text>
-          <Text style={styles.bullet}>• How to thread and use a sewing machine</Text>
-          <Text style={styles.bullet}>• Sewing buttons, zips, hems, and seams</Text>
-          <Text style={styles.bullet}>• Alterations and adjustments</Text>
-          <Text style={styles.bullet}>• Designing and making new clothes</Text>
-
-          {/* Landscaping */}
-          <Text style={styles.subtitle}>Landscaping</Text>
-          <Text style={styles.text}>Fee: R1500</Text>
-          <Text style={styles.text}>Why take it: Make your garden look amazing!</Text>
-          <Text style={styles.bullet}>• Working with indigenous and exotic plants and trees</Text>
-          <Text style={styles.bullet}>• Installing fountains, statues, benches, tables, and built-in braais</Text>
-          <Text style={styles.bullet}>• Balancing plants and trees in your garden</Text>
-          <Text style={styles.bullet}>• Planning garden layouts</Text>
-
-          {/* Life Skills */}
-          <Text style={styles.subtitle}>Life Skills</Text>
-          <Text style={styles.text}>Fee: R1500</Text>
-          <Text style={styles.text}>Why take it: Learn practical skills for everyday life.</Text>
-          <Text style={styles.bullet}>• Opening a bank account</Text>
-          <Text style={styles.bullet}>• Your rights at work (basic labour law)</Text>
-          <Text style={styles.bullet}>• Reading and writing basics</Text>
-          <Text style={styles.bullet}>• Basic math skills</Text>
-
-          {/* Child Minding */}
-          <Text style={styles.subtitle}>Child Minding</Text>
-          <Text style={styles.text}>Fee: R750</Text>
-          <Text style={styles.text}>Why take it: Take care of babies and toddlers safely.</Text>
-          <Text style={styles.bullet}>• Caring for babies from birth to 1 year</Text>
-          <Text style={styles.bullet}>• Toddler care</Text>
-          <Text style={styles.bullet}>• Educational toys and activities</Text>
-
-          {/* Cooking */}
-          <Text style={styles.subtitle}>Cooking</Text>
-          <Text style={styles.text}>Fee: R750</Text>
-          <Text style={styles.text}>Why take it: Cook tasty and healthy meals for your family.</Text>
-          <Text style={styles.bullet}>• Nutrition basics</Text>
-          <Text style={styles.bullet}>• Proteins, carbs, and veggies</Text>
-          <Text style={styles.bullet}>• Meal planning</Text>
-          <Text style={styles.bullet}>• Healthy and delicious recipes</Text>
-          <Text style={styles.bullet}>• Cooking techniques</Text>
-
-          {/* Garden Maintenance */}
-          <Text style={styles.subtitle}>Garden Maintenance</Text>
-          <Text style={styles.text}>Fee: R750</Text>
-          <Text style={styles.text}>Why take it: Keep your garden healthy and beautiful.</Text>
-          <Text style={styles.bullet}>• Watering tips for different plants</Text>
-          <Text style={styles.bullet}>• Pruning and propagation</Text>
-          <Text style={styles.bullet}>• Planting techniques</Text>
-        </View>
-
         {/* 🔙 Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={() => router.push("/home")}>
           <Text style={styles.backButtonText}>Back to Home</Text>
@@ -144,8 +81,15 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.7)",
   },
+  menuContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 100,
+  },
   container: {
     padding: 20,
+    paddingTop: 100,
     alignItems: "center",
   },
   card: {
