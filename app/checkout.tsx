@@ -301,16 +301,14 @@ export default function CheckoutScreen() {
               <Text style={styles.summaryValue}>R{subtotal.toFixed(2)}</Text>
             </View>
 
-            {discount > 0 && (
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>
-                  Discount ({Math.round(discountRate * 100)}%):
-                </Text>
-                <Text style={[styles.summaryValue, styles.discountText]}>
-                  -R{discount.toFixed(2)}
-                </Text>
-              </View>
-            )}
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>
+                Discount ({Math.round(discountRate * 100)}%):
+              </Text>
+              <Text style={[styles.summaryValue, styles.discountText]}>
+                -R{discount.toFixed(2)}
+              </Text>
+            </View>
 
             <View style={styles.summaryRow}>
               <Text style={styles.summaryLabel}>After Discount:</Text>
