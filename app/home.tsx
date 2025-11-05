@@ -42,7 +42,7 @@ export default function HomeScreen() {
         
         {/* Logo */}
         <Image 
-          source={require("../assets/images/logo.jpg")} 
+          source={require("../assets/images/logo.png")} 
           style={styles.logo}
           resizeMode="contain"
         />
@@ -116,11 +116,11 @@ const styles = StyleSheet.create({
     paddingTop: 100, // space for logout button and menu
   },
   logo: { 
-    width: 180,
-    height: 180,
+    width: 300,
+    height: 300,
     resizeMode: 'contain', 
-    marginBottom: 30,
-    marginTop: -10,
+    marginBottom: 6,
+    marginTop: -6,
   },
   title: {
     fontSize: 30,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     textAlign: "center",
-    marginBottom: 20,
+    marginBottom: 10,
     color: "#bbb",
   },
   card: {

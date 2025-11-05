@@ -9,7 +9,7 @@ export default function DropdownMenu() {
   const menuItems = [
     { label: "Home", path: "/home" },
     { label: "About & Courses", path: "/about" },
-    { label: "Calculate Fees", path: "/checkout" },
+    { label: "Payment", path: "/checkout" },
     { label: "Contact", path: "/contact" },
   ];
 
