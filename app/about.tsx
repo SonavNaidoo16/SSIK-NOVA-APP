@@ -52,10 +52,10 @@ export default function AboutScreen() {
         <View style={styles.card}>
           <Text style={styles.title}>Our Services</Text>
           <View style={styles.list}>
-            <Text style={styles.bullet}>• Consulting — Providing expert advice and strategies to help businesses grow and succeed.</Text>
-            <Text style={styles.bullet}>• Training & Development — Offering workshops and training sessions to enhance skills and knowledge.</Text>
-            <Text style={styles.bullet}>• Community Outreach — Engaging with local communities to support development and empowerment initiatives.</Text>
-            <Text style={styles.bullet}>• Project Management — Assisting in the planning, execution, and completion of various projects.</Text>
+            <Text style={styles.bullet}>• Consulting: Providing expert advice and strategies to help businesses grow and succeed.</Text>
+            <Text style={styles.bullet}>• Training & Development: Offering workshops and training sessions to enhance skills and knowledge.</Text>
+            <Text style={styles.bullet}>• Community Outreach: Engaging with local communities to support development and empowerment initiatives.</Text>
+            <Text style={styles.bullet}>• Project Management: Assisting in the planning, execution, and completion of various projects.</Text>
           </View>
           <Text style={styles.text}>
             We are committed to delivering high-quality services that create value and drive positive outcomes 
@@ -63,7 +63,7 @@ export default function AboutScreen() {
           </Text>
         </View>
 
-        {/* 🔙 Back Button */}
+        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={() => router.push("/home")}>
           <Text style={styles.backButtonText}>Back to Home</Text>
         </TouchableOpacity>

@@ -8,7 +8,9 @@ export default function DropdownMenu() {
 
   const menuItems = [
     { label: "Home", path: "/home" },
-    { label: "About & Courses", path: "/about" },
+    { label: "About Us", path: "/about" },
+    { label: "Courses", path: "/courses" },
+    { label: "Course Plan", path: "/courseplan" },
     { label: "Payment", path: "/checkout" },
     { label: "Contact", path: "/contact" },
   ];

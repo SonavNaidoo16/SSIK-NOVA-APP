@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { View, Text, StyleSheet, TouchableOpacity, ImageBackground, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
+import DropdownMenu from "./components/DropdownMenu";
 
 type Course = {
   id: string;
@@ -22,8 +23,19 @@ const SIX_WEEK_COURSES: Course[] = [
   { id: "garden-maintenance", title: "Garden Maintenance", fee: 750, duration: "6 weeks" },
 ];
 
+const COURSES: Course[] = [
+  { id: "first-aid", title: "First Aid", fee: 1500, duration: "6 months" },
+  { id: "sewing", title: "Sewing", fee: 1500, duration: "6 months" },
+  { id: "landscaping", title: "Landscaping", fee: 1500, duration: "6 months" },
+  { id: "life-skills", title: "Life Skills", fee: 1500, duration: "6 months" },
+  { id: "child-minding", title: "Child Minding", fee: 750, duration: "6 weeks" },
+  { id: "cooking", title: "Cooking", fee: 750, duration: "6 weeks" },
+  { id: "garden-maintenance", title: "Garden Maintenance", fee: 750, duration: "6 weeks" },
+];
+
 export default function CoursesScreen() {
   const [selectedGroups, setSelectedGroups] = useState<string[]>([]);
+  const [selected, setSelected] = useState<Course[]>([]);
   const router = useRouter();
 
   const toggleGroup = (groupName: string) => {
@@ -34,10 +46,21 @@ export default function CoursesScreen() {
     );
   };
 
-  const selectedCourses = [
+  const toggleSelect = (course: Course) => {
+    setSelected((prev) => {
+      if (prev.find((c) => c.id === course.id)) {
+        return prev.filter((c) => c.id !== course.id);
+      }
+      return [...prev, course];
+    });
+  };
+
+  const selectedGroupCourses = [
     ...(selectedGroups.includes("6-month") ? SIX_MONTH_COURSES : []),
     ...(selectedGroups.includes("6-week") ? SIX_WEEK_COURSES : []),
   ];
+
+  const allSelected = [...selectedGroupCourses, ...selected];
 
   return (
     <ImageBackground
@@ -46,6 +69,11 @@ export default function CoursesScreen() {
       resizeMode="cover"
     >
       <View style={styles.overlay} />
+
+      {/* Dropdown Menu */}
+      <View style={styles.menuContainer}>
+        <DropdownMenu />
+      </View>
 
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <Text style={styles.header}>Select a Course Group</Text>
@@ -96,19 +124,44 @@ export default function CoursesScreen() {
           </Text>
         </TouchableOpacity>
 
+        <Text style={styles.header}>Select Your Course</Text>
+        <Text style={styles.subtitle}>
+          Select courses to add to your cart for checkout
+        </Text>
+
+        {/* Course Selection */}
+        {COURSES.map((item) => {
+          const isSelected = selected.some((c) => c.id === item.id);
+          return (
+            <TouchableOpacity
+              key={item.id}
+              style={[styles.card, isSelected && styles.cardSelected]}
+              onPress={() => toggleSelect(item)}
+            >
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.meta}>
+                {item.duration} · R{item.fee}
+              </Text>
+              <Text style={[styles.check, isSelected && styles.checkSelected]}>
+                {isSelected ? "Selected" : "Tap to add"}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+
         {/* Checkout Button */}
-        {selectedCourses.length > 0 && (
+        {allSelected.length > 0 && (
           <TouchableOpacity
             style={styles.checkoutButton}
             onPress={() =>
               router.push({
                 pathname: "/checkout",
-                params: { selected: JSON.stringify(selectedCourses) },
+                params: { selected: JSON.stringify(allSelected) },
               })
             }
           >
             <Text style={styles.checkoutText}>
-              Go to Checkout ({selectedCourses.length} Courses)
+              Go to Checkout ({allSelected.length} Courses)
             </Text>
           </TouchableOpacity>
         )}
@@ -131,6 +184,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(0,0,0,0.4)",
   },
+  menuContainer: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    zIndex: 100,
+  },
   scrollContainer: {
     padding: 20,
     paddingBottom: 120,
@@ -144,6 +203,12 @@ const styles = StyleSheet.create({
     textShadowColor: "rgba(123,44,191,0.8)",
     textShadowOffset: { width: 0, height: 0 },
     textShadowRadius: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    textAlign: "center",
+    marginBottom: 20,
+    color: "#bbb",
   },
   card: {
     backgroundColor: "rgba(255,255,255,0.1)",
